@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/data/jpa
+	    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+
+
+
+    <!-- 组件自动扫描  @Controller-->
+    <context:component-scan base-package="com.fyc.crm">
+        <!-- 扫描时跳过 @Controller 注解的JAVA类（控制器） -->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+
+    <!-- 使用spring自带的占位符替换功能 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!-- 允许JVM参数覆盖 -->
+        <property name="systemPropertiesModeName"
+                  value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <!-- 忽略没有找到的资源文件 -->
+        <property name="ignoreResourceNotFound" value="true"/>
+        <!-- 配置资源文件 -->
+        <property name="locations">
+            <list>
+                <value>classpath:db.properties</value>
+                <!--  <value>classpath:env.properties</value>-->
+            </list>
+        </property>
+    </bean>
+    <!-- spring读取db.properties文件  location:读取的文件路径-->
+    <!-- <context:property-placeholder location="classpath:db.properties"/>-->
+
+    <!--c3p0连接池-->
+   <!--  <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+         <property name="jdbcUrl" value="${jdbc.url}"/>
+         <property name="driverClass" value="${jdbc.driverClassName}"/>
+         <property name="user" value="${jdbc.username}"/>
+         <property name="password" value="${jdbc.password}"/>
+     </bean>-->
+
+    <!-- 配置数据库连接池，这里使用druid -->
+    <!-- 配置数据源 -->
+    <bean id="dataSource"
+          class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <!-- 数据库驱动 -->
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <!-- 相应驱动的jdbc url -->
+        <property name="url" value="${jdbc.url}"/>
+        <!-- 数据库的用户名 -->
+        <property name="username" value="${jdbc.username}"/>
+        <!-- 数据库的密码 -->
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!-- 初始化连接数量 -->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis"
+                  value="${jdbc.timeBetweenEvictionRunsMillis}"/>
+    </bean>
+    <!--2.创建sessionFactory-->
+    <!--  <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+          <property name="dataSource" ref="dataSource"/>
+          <property name="hibernateProperties">
+              <props>
+                  <prop key="hibernate.show_sql">true</prop>
+                  <prop key="hibernate.format_sql">true</prop>
+                  &lt;!&ndash; 数据库方言
+               所有的关系数据库都在标准的SQL语言上做了扩展。我们将每个一个数据库支持的SQL语言称为数据库方言。
+               Oracle数据库支持的SQL语言，称为Oracle数据库的SQL方言：org.hibernate.dialect.Oracle10gDialect。
+               MySQL数据库支持的SQL语言，称为MySQL数据库的方言：org.hibernate.dialect.MySQL5InnoDBDialect。
+               Hibernate默认已经根据数据库的类型，自动配置数据库的方言了。
+                   不是最优化的，最优化的需要手工指定。 &ndash;&gt;
+                  <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+              </props>
+          </property>
+
+          <property name="packagesToScan">
+          <array>
+                  <value>com.caicai.bos.pojo</value>
+              </array>
+          </property>
+          &lt;!&ndash; JPA注解 &ndash;&gt;
+      </bean>-->
+
+    <!-- 3.1 开启事务注解 -->
+    <!-- <tx:annotation-driven transaction-manager="transactionManager"/>-->
+    <!-- 3.2 事务管理器 -->
+    <!-- <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+         <property name="sessionFactory" ref="sessionFactory"/>
+     </bean>-->
+    <!-- 4.开启IOC注解 -->
+    <!--  <context:component-scan base-package="com.caicai"/>-->
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <!-- hibernate配置信息 -->
+                <property name="showSql" value="true"></property>
+                <!-- <property name="generateDdl" value="true"/> -->
+                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect"></property>
+            </bean>
+
+        </property>
+        <!--待扫描的实体类包，不再须要persistence.xml了 -->
+        <property name="packagesToScan">
+            <array>
+                <value>com.fyc.crm.pojo</value>
+            </array>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- 3.2 新的事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"></property>
+    </bean>
+    <!-- 开启IOC注解 -->
+    <context:component-scan base-package="com.fyc.crm"/>
+
+    <!-- spring data jpa扫描包配置
+		base-package: Dao接口所在的包
+	-->
+    <jpa:repositories base-package="com.fyc.crm.dao"/>
+    <import resource="applicationContext-webservice.xml"/>
+</beans>

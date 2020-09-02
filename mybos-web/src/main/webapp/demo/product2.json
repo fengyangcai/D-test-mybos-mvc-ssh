@@ -1,0 +1,12 @@
+{
+	"total": 100,
+	"rows" : [
+		{"id":9,"name":"冰箱","price":1000,"_parentId":null},
+		{"id":11,"name":"容声冰箱","price":1500 ,"_parentId":9},
+		{"id":12,"name":"海尔冰箱","price":1700 ,"_parentId":9,"checked":true},
+		{"id":121,"name":"大的海尔冰箱","price":1300 ,"_parentId":12,"checked":true},
+		{"id":122,"name":"小的海尔冰箱","price":1400 ,"_parentId":12,"checked":true},
+		{"id":2,"name":"电视","price":2000,"checked":true},
+		{"id":3,"name":"笔记本","price":4000,"checked":true}
+	]
+}

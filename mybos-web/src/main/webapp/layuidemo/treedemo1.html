@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>树形数据展示</title>
+    <link rel="stylesheet" href="css/layui.css"  type="text/css">
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>基本演示</legend>
+</fieldset>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>开启节点操作图标</legend>
+</fieldset>
+<div id="test9" class="demo-tree demo-tree-box" style="width: 300px; height: 300px; overflow: scroll;"></div>
+
+<script type="text/javascript" src="layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="../js/easyui/jquery.min.js"></script>
+<script type="text/javascript">
+
+    layui.use(['tree', 'util'], function() {
+
+        var tree = layui.tree
+            , layer = layui.layer
+            , util = layui.util
+            ,data=[
+            {"id":1, title:"冰箱","name":"冰箱","price":1000,
+                "children":[{"id":13,title:"海尔冰箱","name":"海尔冰箱","price":1700 ,"parent_id":1,"checked":true},
+                    {"id":14,title:"容声冰箱","name":"容声冰箱","price":1500 ,"parent_id":1,parent:1},
+                ]},
+            {"id":11,title:"容声冰箱","name":"容声冰箱","price":1500 ,"parent_id":1,parent:1},
+            {"id":12,title:"海尔冰箱","name":"海尔冰箱","price":1700 ,"parent_id":1,"checked":true},
+            {"id":2,title:"电视","name":"电视","price":2000,"checked":true},
+            {"id":3,title:"笔记本","name":"笔记本","price":4000,"checked":true}
+        ];
+        //点击节点新窗口跳转
+        tree.render({
+            elem: '#test5'
+            ,data: data
+            ,isJump: true  //link 为参数匹配
+        });
+
+        //开启复选框
+        tree.render({
+            elem: '#test7'
+            ,data: data
+            ,showCheckbox: true
+        });
+
+        //开启节点操作图标
+        tree.render({
+            elem: '#test9'
+            ,data: data
+            ,isJump: true  //link 为参数匹配
+            ,showCheckbox: true//开启复选框
+            ,edit: ['add', 'update', 'del'] //操作节点的图标
+            ,click: function(obj){
+                layer.msg(JSON.stringify(obj.data));
+            }
+        });
+    })
+</script>
+</body>
+
+</html>

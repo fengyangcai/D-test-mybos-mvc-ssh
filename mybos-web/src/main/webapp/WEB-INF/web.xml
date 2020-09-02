@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+    <display-name>mybos-web</display-name>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- 元素的加载顺序：
+       1.加载全局配置参数context-param
+       2.加载监听器listener
+       3.加载过滤器filter：根据配置的顺序加载
+       4.加载servlet：根据配置的优先级加载，load-on-startup的值大于0的整数，越小优先级越高 -->
+    <!-- 加载spring配置文件 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring/applicationContext.xml</param-value>
+    </context-param>
+    <!--  <context-param>
+          <param-name>log4jConfigLocation</param-name>
+          <param-value>classpath:log4j.properties</param-value>
+      </context-param>-->
+
+    <!-- spring监听器 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--hibernate4 开启session -->
+    <!--springmvc中使用这个开启这个会出现 No bean named 'sessionFactory' is defined异常 -->
+    <!--这个适合strut2中使用  -->
+    <!--  <filter>
+         <filter-name>openSession</filter-name>
+         <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+         <init-param>
+             <param-name>singleSession</param-name>
+             <param-value>false</param-value>
+         </init-param>
+     </filter>
+     <filter-mapping>
+         <filter-name>openSession</filter-name>
+         <url-pattern>/*</url-pattern>
+     </filter-mapping>  -->
+    <!--Spring提供OpenSessionInViewFiler过滤器（推荐）  -->
+    <!--OpenSessionInViewFiler过滤器的作用，在进入视图层之前，开启session，在访问完视图之后，关闭session。  -->
+    <filter>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- 编码过滤器 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 防止spring内存溢出监听器，比如quartz -->
+    <!--  <listener>
+         <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+     </listener>  -->
+    <!-- spring mvc servlet-->
+    <servlet>
+        <servlet-name>mybos-web</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/spring-mvc.xml</param-value>
+        </init-param>
+        <!-- tomcat启动时完成初始化；若不配置则在第一次请求后完成初始化 -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mybos-web</servlet-name>
+        <!-- 此处也可以配置成 *.do 形式 -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <!-- 启动CXF -->
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
+
+
+</web-app>

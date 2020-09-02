@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/jaxrs
+	http://cxf.apache.org/schemas/jaxrs.xsd">
+
+    <jaxrs:server address="/promotionService">
+        <jaxrs:serviceBeans>
+            <bean class="com.fyc.bos.service.take_delivery.impl.PromotionServiceImpl"/>
+        </jaxrs:serviceBeans>
+        <!-- 日志拦截器 -->
+        <jaxrs:inInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+        </jaxrs:inInterceptors>
+        <jaxrs:outInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+        </jaxrs:outInterceptors>
+    </jaxrs:server>
+
+    <jaxrs:server address="/orderService">
+        <jaxrs:serviceBeans>
+            <bean class="com.fyc.bos.service.take_delivery.impl.OrderServiceImpl"></bean>
+        </jaxrs:serviceBeans>
+        <!-- 日志拦截器 -->
+        <jaxrs:inInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+        </jaxrs:inInterceptors>
+        <jaxrs:outInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+        </jaxrs:outInterceptors>
+    </jaxrs:server>
+
+</beans>

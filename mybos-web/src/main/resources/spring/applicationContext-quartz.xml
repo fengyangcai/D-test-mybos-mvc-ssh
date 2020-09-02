@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <!-- 关联我们的Job类 -->
+        <property name="jobClass" value="com.fyc.bos.jobs.PromotionJob"/>
+        <!-- 2.创建Trigger:SimpleTriiger -->
+    </bean>
+   <!-- <bean id="trigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        &lt;!&ndash; 关联JobDetail &ndash;&gt;
+        <property name="jobDetail" ref="jobDetail"/>
+        &lt;!&ndash; 间隔时间 (毫秒)&ndash;&gt;
+       &lt;!&ndash; <property name="repeatInterval" value="3000"></property>&ndash;&gt;
+        &lt;!&ndash; 重复次数 &ndash;&gt;
+        &lt;!&ndash;<property name="repeatCount" value="4"></property>&ndash;&gt;
+    </bean>-->
+    <!-- 2.创建Trigger:SimpleTriiger -->
+    <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 关联JobDetail -->
+        <property name="jobDetail" ref="jobDetail"/>
+        <!-- cron表达式 22时跟新测试一次-->
+        <property name="cronExpression" value="0 0 22 * * ? *"/>
+    </bean>
+
+    <!-- 3.创建Scheduler -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!-- 覆盖setJobFactory ，使用我们自定义的JobFactory-->
+        <property name="jobFactory" ref="jobFactory"/>
+        <!-- 关联trigger -->
+        <property name="triggers">
+            <list>
+                <ref bean="trigger"/>
+            </list>
+        </property>
+    </bean>
+
+
+</beans>
